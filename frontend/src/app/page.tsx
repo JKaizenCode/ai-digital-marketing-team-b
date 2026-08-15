@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { buttonVariants } from '@/components/ui/Button'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -8,30 +9,25 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
-      <div className="space-y-4 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
+    <main className="bg-surface flex min-h-screen flex-col items-center justify-center gap-10 px-6 py-16">
+      <div className="max-w-xl space-y-5 text-center">
+        <h1 className="display text-ink text-5xl text-balance">
           {process.env.NEXT_PUBLIC_APP_NAME ?? 'App'}
         </h1>
-        <p className="max-w-md text-lg text-zinc-600 dark:text-zinc-400">
+        <p className="text-ink-muted text-base leading-relaxed">
           Your app description goes here. Edit{' '}
-          <code className="rounded bg-zinc-100 px-1 py-0.5 font-mono text-sm dark:bg-zinc-800">
+          <code className="bg-surface-sunken border-line text-ink rounded border px-1.5 py-0.5 font-mono text-sm">
             src/app/page.tsx
           </code>{' '}
           to get started.
         </p>
       </div>
-      <div className="flex gap-4">
-        <Link
-          href="/auth/signin"
-          className="inline-flex items-center justify-center rounded-md bg-black px-6 py-2.5 text-sm font-medium text-white shadow transition-colors hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-        >
+
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Link href="/auth/signin" className={buttonVariants({ size: 'lg' })}>
           Sign in
         </Link>
-        <Link
-          href="/auth/signup"
-          className="inline-flex items-center justify-center rounded-md border border-zinc-200 bg-white px-6 py-2.5 text-sm font-medium shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
-        >
+        <Link href="/auth/signup" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
           Create account
         </Link>
       </div>

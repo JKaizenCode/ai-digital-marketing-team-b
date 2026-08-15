@@ -4,11 +4,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { LogOut, User } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { MobileNav } from './MobileNav'
 
 export function Navbar() {
   const router = useRouter()
   const { user, signOut } = useAuth()
 
+  // Unchanged from the original: clears the session then redirects.
   const handleSignOut = async () => {
     await signOut()
     router.replace('/auth/signin')
@@ -16,27 +18,36 @@ export function Navbar() {
   }
 
   return (
-    <header className="flex h-14 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="text-sm font-semibold lg:hidden">
+    <header className="border-line bg-surface-raised flex h-16 shrink-0 items-center gap-3 border-b px-4 sm:px-6">
+      {/* Below lg the Sidebar is hidden, so the drawer trigger lives here. */}
+      <MobileNav />
+
+      <span className="display text-ink truncate text-lg lg:hidden">
         {process.env.NEXT_PUBLIC_APP_NAME ?? 'App'}
-      </div>
+      </span>
+
       <div className="flex-1" />
-      <div className="flex items-center gap-3">
-        {user && <span className="hidden text-sm text-zinc-500 sm:block">{user.email}</span>}
+
+      <div className="flex items-center gap-2">
+        {user && (
+          <span className="text-ink-muted hidden max-w-[18ch] truncate text-sm sm:block">
+            {user.email}
+          </span>
+        )}
         <Link
           href="/profile"
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+          className="border-line bg-surface-sunken text-ink-muted hover:border-line-strong hover:text-ink flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
           aria-label="Profile"
         >
-          <User className="h-4 w-4" />
+          <User className="h-4 w-4" aria-hidden="true" />
         </Link>
         <button
           type="button"
           onClick={handleSignOut}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+          className="text-ink-subtle hover:bg-surface-sunken hover:text-ink flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           aria-label="Sign out"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     </header>

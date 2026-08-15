@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-const PROTECTED_ROUTES = ['/dashboard', '/profile', '/settings']
+// '/team' added for the Sprint 1 Team Members page. This is the only change
+// to this file: strictly additive, and it makes the new route consistent with
+// its siblings. Real enforcement is unchanged — (dashboard)/layout.tsx already
+// verifies the session server-side before rendering any page in this group.
+const PROTECTED_ROUTES = ['/dashboard', '/team', '/profile', '/settings']
 const AUTH_ROUTES = ['/auth/signin', '/auth/signup']
 
 /**

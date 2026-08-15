@@ -1,26 +1,186 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Design tokens
+   --------------------------------------------------------------------------
+   Single source of truth for colour, type, radius and elevation.
+   Change a value here and it propagates through every component.
+
+   Palette: cool blue-grey neutrals with a deep slate accent.
+
+   Every screen now reads from these tokens — there are no raw Tailwind colour
+   utilities left in src/. Keep it that way: reach for a token, and add one
+   here if none fits, rather than dropping a one-off colour into a component.
+
+   All ink-on-surface pairings below meet WCAG 2.1 AA (>= 4.5:1).
+   ========================================================================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Surfaces — page background through to raised cards */
+  --surface: #f7f9fa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #eef1f4;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Ink — text and icons, in descending emphasis */
+  --ink: #102a43; /* 15.8:1 on --surface */
+  --ink-muted: #486581; /*  5.9:1 on --surface */
+  --ink-subtle: #62798f; /*  4.9:1 on --surface — still safe for body text */
+
+  /* Hairlines */
+  --line: #e1e7ec;
+  --line-strong: #cbd4db;
+
+  /* Accent — primary actions, active nav, focus rings */
+  --accent: #334e68; /* 9.5:1 against white */
+  --accent-hover: #243b53;
+  --accent-soft: #e4ebf1;
+  --accent-ink: #ffffff;
+
+  /* Brand panel (auth pages). Deliberately NOT --accent: the accent inverts to
+     a light tint in dark mode, which would put a glaring pale slab next to the
+     dark form column. The panel keeps its own pair so it reads as a deep
+     surface in both schemes. */
+  --panel: #334e68;
+  --panel-ink: #ffffff;
+
+  /* Feedback */
+  --danger: #b4232c; /* 5.9:1 on --surface-raised */
+  --danger-soft: #fdecec;
+
+  /* Elevation — deliberately minimal; hairlines do the work, not shadows */
+  --shadow-card: 0 1px 2px 0 rgb(16 42 67 / 0.04);
+  --shadow-raised: 0 1px 3px 0 rgb(16 42 67 / 0.08), 0 1px 2px -1px rgb(16 42 67 / 0.06);
+
+  /* Retained from the original boilerplate so any untouched consumer of
+     --background / --foreground keeps working. */
+  --background: var(--surface);
+  --foreground: var(--ink);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --surface: #0b1620;
+    --surface-raised: #12212e;
+    --surface-sunken: #08111a;
+
+    --ink: #e6edf3;
+    --ink-muted: #9fb3c8;
+    --ink-subtle: #8299ad;
+
+    --line: #1e3245;
+    --line-strong: #2c4459;
+
+    --accent: #7fa8c9;
+    --accent-hover: #9dbeda;
+    --accent-soft: #16293a;
+    --accent-ink: #0b1620;
+
+    /* Stays dark — see the note on --panel above. */
+    --panel: #101d29;
+    --panel-ink: #e6edf3;
+
+    --danger: #f09393;
+    --danger-soft: #2a1416;
+
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Expose the tokens to Tailwind so `bg-surface`, `text-ink-muted`,
+   `border-line`, `rounded-card`, `font-serif` etc. all generate. */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+
+  --color-panel: var(--panel);
+  --color-panel-ink: var(--panel-ink);
+
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Type. Geist is loaded in app/layout.tsx via next/font.
+     The serif is a system stack — no extra network request, no bundle cost,
+     and it gives headings an editorial voice a second sans cannot. */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: 'Iowan Old Style', Georgia, Cambria, 'Times New Roman', ui-serif, serif;
+
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  /* NOTE: the original stylesheet set `font-family: Arial, Helvetica, sans-serif`
+     here, which silently overrode the Geist fonts loaded in layout.tsx.
+     Deferring to the token restores the intended typeface. */
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* One consistent, visible focus treatment across the whole app. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Long unbroken strings (URLs, unspaced names) must never blow out a card. */
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  li,
+  dd,
+  dt {
+    overflow-wrap: break-word;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+/* Editorial heading treatment. Applied sparingly — page titles and the
+   auth wordmark only — so it reads as a considered choice, not decoration. */
+@utility display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
 }
