@@ -8,20 +8,20 @@ interface EmptyStateProps {
   action?: React.ReactNode
 }
 
-export function EmptyState({
-  title,
-  description,
-  icon: Icon = Inbox,
-  action,
-}: EmptyStateProps) {
+/**
+ * Restyled onto the design tokens. The Team Members page renders this when the
+ * `teamMembers` collection is empty, so leaving it on the old zinc palette
+ * would have put off-system styling directly inside a spec'd page.
+ */
+export function EmptyState({ title, description, icon: Icon = Inbox, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
-        <Icon className="h-6 w-6 text-zinc-400" />
+    <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+      <div className="bg-surface-sunken border-line flex h-12 w-12 items-center justify-center rounded-full border">
+        <Icon className="text-ink-subtle h-6 w-6" aria-hidden="true" />
       </div>
       <div>
-        <p className="font-medium text-sm">{title}</p>
-        {description && <p className="text-zinc-500 text-sm mt-1">{description}</p>}
+        <p className="text-ink text-sm font-semibold">{title}</p>
+        {description && <p className="text-ink-muted mt-1 max-w-prose text-sm">{description}</p>}
       </div>
       {action && <div className="mt-2">{action}</div>}
     </div>

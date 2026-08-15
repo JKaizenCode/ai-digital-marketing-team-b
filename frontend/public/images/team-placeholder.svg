@@ -1,0 +1,35 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 400 500"
+  width="400"
+  height="500"
+  role="img"
+  aria-label="Placeholder portrait"
+  preserveAspectRatio="xMidYMid slice"
+>
+  <title>Placeholder portrait</title>
+  <desc>
+    Interim placeholder for a missing or broken team member photo. Drawn at 4:5
+    to match the card frame. Colours mirror the surface-sunken, line-strong and
+    ink-subtle design tokens so it sits quietly in the grid. Replace this file
+    with the client-approved placeholder asset when available; the path
+    /images/team-placeholder.svg is referenced from MemberAvatar.tsx.
+  </desc>
+
+  <rect width="400" height="500" fill="#eef1f4" />
+
+  <g fill="#cbd4db">
+    <circle cx="200" cy="205" r="58" />
+    <path d="M200 283c-59 0-107 41-107 92v28h214v-28c0-51-48-92-107-92z" />
+  </g>
+
+  <rect
+    x="0.5"
+    y="0.5"
+    width="399"
+    height="499"
+    fill="none"
+    stroke="#e1e7ec"
+    stroke-width="1"
+  />
+</svg>

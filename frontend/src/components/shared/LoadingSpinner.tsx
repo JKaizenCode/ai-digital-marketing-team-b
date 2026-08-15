@@ -11,13 +11,18 @@ const sizeClasses = {
   lg: 'h-12 w-12 border-4',
 }
 
+/**
+ * Restyled onto the design tokens. This matters for AC01: FullPageSpinner is
+ * what the Login page renders while auth state resolves, so on the old zinc
+ * palette the very first thing a user saw was off-system.
+ */
 export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) {
   return (
     <div
       role="status"
       aria-label="Loading"
       className={cn(
-        'animate-spin rounded-full border-zinc-300 border-t-zinc-700 dark:border-zinc-700 dark:border-t-zinc-300',
+        'border-line border-t-accent animate-spin rounded-full',
         sizeClasses[size],
         className
       )}

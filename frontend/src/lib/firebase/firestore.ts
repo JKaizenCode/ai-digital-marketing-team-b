@@ -1,6 +1,6 @@
 import { collection, doc, type CollectionReference, type DocumentData } from 'firebase/firestore'
 import { getClientDb } from './client'
-import type { UserProfile } from '@/types/firestore'
+import { TEAM_MEMBERS_COLLECTION, type TeamMember, type UserProfile } from '@/types/firestore'
 
 /**
  * Creates a typed Firestore collection reference.
@@ -22,4 +22,22 @@ export function getUsersCollection() {
 
 export function userDoc(uid: string) {
   return doc(getUsersCollection(), uid)
+}
+
+/**
+ * Team members shown on /team.
+ *
+ * NOTE: the Team Members page reads this collection server-side through the
+ * Admin SDK (see src/features/team/actions/team.actions.ts), which bypasses
+ * security rules. This client-side reference exists for parity with the
+ * boilerplate's collection convention and for any future client-side feature.
+ * If you do start reading it from the browser, add a matching rule in
+ * firebase/firestore.rules first.
+ */
+export function getTeamMembersCollection() {
+  return typedCollection<TeamMember>(TEAM_MEMBERS_COLLECTION)
+}
+
+export function teamMemberDoc(id: string) {
+  return doc(getTeamMembersCollection(), id)
 }

@@ -1,26 +1,28 @@
 import type { Metadata } from 'next'
 import { getServerSession } from '@/actions/auth.actions'
+import { PageHeader } from '@/components/layout/PageHeader'
+import { Card } from '@/components/ui/Card'
 
 export const metadata: Metadata = {
   title: 'Profile',
 }
 
 export default async function ProfilePage() {
+  // Session logic unchanged — restyle only.
   const session = await getServerSession()
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="mt-1 text-sm text-zinc-500">Manage your account details.</p>
-      </div>
+    <div className="mx-auto max-w-3xl">
+      <PageHeader title="Profile" description="Manage your account details." />
 
-      <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <div>
-          <p className="text-xs font-medium tracking-wide text-zinc-400 uppercase">Email</p>
-          <p className="mt-1 text-sm">{session?.email ?? '—'}</p>
-        </div>
-      </div>
+      <Card className="mt-8">
+        <dl className="space-y-1">
+          <dt className="text-ink-muted text-xs font-semibold tracking-[0.12em] uppercase">
+            Email
+          </dt>
+          <dd className="text-ink text-sm break-words">{session?.email ?? '—'}</dd>
+        </dl>
+      </Card>
     </div>
   )
 }

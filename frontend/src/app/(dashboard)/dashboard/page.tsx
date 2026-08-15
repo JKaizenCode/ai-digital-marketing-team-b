@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import { getServerSession } from '@/actions/auth.actions'
 import { adminDb } from '@/lib/firebase/admin'
+import { PageHeader } from '@/components/layout/PageHeader'
+import { Card } from '@/components/ui/Card'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
 }
 
 export default async function DashboardPage() {
+  // Data logic unchanged — restyle only.
   const session = await getServerSession()
   const profileSnap = session ? await adminDb.collection('users').doc(session.uid).get() : null
 
@@ -16,23 +19,20 @@ export default async function DashboardPage() {
   const greetingName = displayName ?? session?.email ?? null
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Welcome back{greetingName ? `, ${greetingName}` : ''}.
-        </p>
-      </div>
+    <div className="mx-auto max-w-6xl">
+      <PageHeader
+        title="Dashboard"
+        description={`Welcome back${greetingName ? `, ${greetingName}` : ''}.`}
+      />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {(['Metric One', 'Metric Two', 'Metric Three'] as const).map((title) => (
-          <div
-            key={title}
-            className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-          >
-            <p className="text-sm font-medium text-zinc-500">{title}</p>
-            <p className="mt-2 text-3xl font-bold">—</p>
-          </div>
+          <Card key={title}>
+            <p className="text-ink-muted text-xs font-semibold tracking-[0.12em] uppercase">
+              {title}
+            </p>
+            <p className="display text-ink mt-3 text-4xl">—</p>
+          </Card>
         ))}
       </div>
     </div>
