@@ -8,57 +8,64 @@ export const PLACEHOLDER_SRC = '/images/team-placeholder.svg'
 interface MemberAvatarProps {
   /** Photo URL, or null when the member has no photo set. */
   src: string | null
-  /** Used for alt text. Not rendered visually. */
+  /** Used for alt text and local image lookup. */
   name: string
 }
 
 /**
- * Team member portrait with a runtime fallback.
+ * Team member portrait with hard-coded local images and a runtime fallback.
  *
- * Handles both failure modes the spec calls out:
- *   - no photo set        → `src` is null, placeholder renders immediately
- *   - photo fails to load → `onError` fires, placeholder replaces it
+ * Local images are stored in:
+ *   frontend/public/images/
  *
- * Client component because `onError` is a browser event; it is the only part
- * of the team card that ships JavaScript.
- *
- * Uses a plain <img> rather than next/image on purpose: photo URLs are
- * arbitrary and would each need an entry in `images.remotePatterns`, and an
- * unconfigured host makes the optimiser return a 500 instead of firing
- * `onError` — which would defeat the placeholder requirement entirely.
+ * The existing image dimensions and object-cover styling are preserved.
  */
 export function MemberAvatar({ src, name }: MemberAvatarProps) {
-  // Track which URL failed rather than a boolean, so a changed `src` gets a
-  // fresh attempt instead of inheriting a stale failure.
   const [failedSrc, setFailedSrc] = useState<string | null>(null)
   const imgRef = useRef<HTMLImageElement>(null)
 
-  // The card is server-rendered, so a broken photo can finish failing BEFORE
-  // React hydrates and attaches onError — in which case the event is missed
-  // and the placeholder would never appear. Re-check on mount: an image that
-  // reports `complete` with zero natural width has failed to decode.
+  const localImages: Record<string, string> = {
+    anthony: '/images/Anthony.png',
+    arnav: '/images/Arnav.png',
+    chungheng: '/images/Chunghend.png',
+    jeron: '/images/Jeron.png',
+    minh: '/images/Minh.png',
+  }
+
+  const normalizedName = name.trim().toLowerCase()
+
+  const matchedName = Object.keys(localImages).find((key) =>
+    normalizedName.startsWith(key)
+  )
+
+  const localSrc = matchedName ? localImages[matchedName] : undefined
+
+  const usePlaceholder = !localSrc || failedSrc === localSrc
+  const resolvedSrc = usePlaceholder ? PLACEHOLDER_SRC : localSrc
+
   useEffect(() => {
     const img = imgRef.current
-    if (!img || !src) return
-    if (img.complete && img.naturalWidth === 0) setFailedSrc(src)
-  }, [src])
 
-  const usePlaceholder = !src || failedSrc === src
-  const resolvedSrc = usePlaceholder ? PLACEHOLDER_SRC : src
+    if (!img || !localSrc) return
+
+    if (img.complete && img.naturalWidth === 0) {
+      setFailedSrc(localSrc)
+    }
+  }, [localSrc])
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- see note above
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       ref={imgRef}
       src={resolvedSrc}
-      // The placeholder carries no information; the name is already in the
-      // adjacent heading, so announcing it twice is noise.
       alt={usePlaceholder ? '' : `Portrait of ${name}`}
       loading="lazy"
       decoding="async"
-      onError={() => src && setFailedSrc(src)}
-      // object-cover crops to the frame — never stretches or distorts,
-      // whatever aspect ratio the source happens to be.
+      onError={() => {
+        if (localSrc) {
+          setFailedSrc(localSrc)
+        }
+      }}
       className="h-full w-full object-cover object-center"
     />
   )
