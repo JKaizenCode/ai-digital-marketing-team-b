@@ -11,8 +11,8 @@ export default function LandingPage() {
   return (
     <main className="bg-surface flex min-h-screen flex-col items-center justify-center gap-10 px-6 py-16">
       <div className="max-w-xl space-y-5 text-center">
-        <h1 className="display text-ink text-5xl text-balance">
-          {process.env.NEXT_PUBLIC_APP_NAME ?? 'App'}
+        <h1 className="text-ink font-serif text-5xl font-bold tracking-tight text-balance">
+          AI Digital Marketing Team B
         </h1>
         <p className="text-ink-muted text-base leading-relaxed">
           A secure internal dashboard for Apsis VR staff — sign in, view the team, manage your account.
