@@ -34,7 +34,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace('/dashboard')
+      router.replace('/team')
     }
   }, [loading, user, router])
 
@@ -51,7 +51,7 @@ export default function SignInPage() {
     try {
       await signInWithEmail(data.email, data.password)
       toast.success('Signed in successfully')
-      router.replace('/dashboard')
+      router.replace('/team')
       router.refresh()
     } catch (error: unknown) {
       if (error instanceof Error && error.message.includes('email-not-verified')) {
@@ -66,7 +66,7 @@ export default function SignInPage() {
     setIsGoogleSubmitting(true)
     try {
       await signInWithGoogle()
-      router.replace('/dashboard')
+      router.replace('/team')
     } catch {
       toast.error('Google sign-in failed. Please try again.')
     } finally {
@@ -111,9 +111,6 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* No `noValidate` here, deliberately: adding it would suppress the
-          browser's native constraint checks and change validation behaviour,
-          which is out of scope per the spec. See follow-ups in the handover. */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Field htmlFor="email" label="Email" error={errors.email?.message}>
           <Input
@@ -139,12 +136,17 @@ export default function SignInPage() {
               className="pr-11"
               {...register('password')}
             />
-            <PasswordToggle visible={showPassword} onToggle={() => setShowPassword((v) => !v)} />
+            <PasswordToggle
+              visible={showPassword}
+              onToggle={() => setShowPassword((v) => !v)}
+            />
           </div>
         </Field>
 
         <Button type="submit" size="lg" block disabled={busy} className="mt-2">
-          {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+          {isSubmitting && (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          )}
           {isSubmitting ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>
